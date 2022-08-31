@@ -3,7 +3,7 @@ package com.example.jobsity.main_screen.view_model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jobsity.data.local.MainRepository
-import com.example.jobsity.data.local.ShowItem
+import com.example.jobsity.data.local.entities.ShowItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,5 +32,5 @@ class MainViewModel
 sealed interface MainState {
     object Loading: MainState
     object Error: MainState
-    class Loaded(val list: List<ShowItem>): MainState
+    class ShowsLoaded(val list: List<ShowItem>): MainState
 }

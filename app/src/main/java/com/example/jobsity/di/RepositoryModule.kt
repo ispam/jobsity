@@ -12,7 +12,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 
 @Module(includes = [AppModule::class, NetworkModule::class])
 @InstallIn(value = [ViewModelComponent::class])
-object MainModule {
+object RepositoryModule {
 
     @Provides
     fun provideMainRepositoryImpl(

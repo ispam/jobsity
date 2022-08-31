@@ -1,5 +1,8 @@
 package com.example.jobsity.main_screen
 
+import android.widget.Toast
+import androidx.core.os.bundleOf
+import androidx.navigation.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.jobsity.R
@@ -12,7 +15,7 @@ import com.example.jobsity.utils.observeFlow
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainFragment: BaseFragment<FragmentMainBinding>() {
+class MainFragment : BaseFragment<FragmentMainBinding>() {
 
     private lateinit var mainAdapter: MainAdapter
     private val viewModel: MainViewModel by navGraphViewModels(R.id.main_graph) {
@@ -33,9 +36,14 @@ class MainFragment: BaseFragment<FragmentMainBinding>() {
             is MainState.Error -> {
                 delayedBlock {
                     closeDialog()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.dialog_loading_error),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
-            is MainState.Loaded -> {
+            is MainState.ShowsLoaded -> {
                 delayedBlock {
                     closeDialog()
                     mainAdapter.submitList(state.list)
@@ -48,10 +56,15 @@ class MainFragment: BaseFragment<FragmentMainBinding>() {
     private fun setupRecycler() {
         binding.mainRecycler.apply {
             mainAdapter = MainAdapter {
-
+                val bundle = bundleOf(SHOW_ID to it.id)
+                findNavController().navigate(R.id.action_mainFragment_to_showDetailsFragment, bundle)
             }
             adapter = mainAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
+    }
+
+    companion object {
+        private const val SHOW_ID = "showId"
     }
 }

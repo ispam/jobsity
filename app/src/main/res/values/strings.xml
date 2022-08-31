@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Jobsity</string>
     <string name="dialog_loading">Loading</string>
+    <string name="dialog_loading_error">Error loading</string>
 </resources>

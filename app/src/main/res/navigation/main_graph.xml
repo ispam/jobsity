@@ -7,7 +7,18 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        tools:layout="@layout/fragment_main"
         android:name="com.example.jobsity.main_screen.MainFragment"
-        android:label="MainFragment" />
+        android:label="MainFragment"
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_mainFragment_to_showDetailsFragment"
+            app:destination="@id/showDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/showDetailsFragment"
+        android:name="com.example.jobsity.details.ShowDetailsFragment"
+        android:label="ShowDetailsFragment"
+        tools:layout="@layout/fragment_show_details" />
+
 </navigation>

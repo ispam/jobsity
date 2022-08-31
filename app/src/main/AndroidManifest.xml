@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Jobsity">
         <activity
-            android:name=".MainActivity"
+            android:name=".main_screen.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

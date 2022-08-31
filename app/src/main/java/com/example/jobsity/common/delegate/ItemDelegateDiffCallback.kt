@@ -1,4 +1,4 @@
-package com.example.jobsity.common
+package com.example.jobsity.common.delegate
 
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil

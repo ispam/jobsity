@@ -6,7 +6,7 @@ import com.example.jobsity.main_screen.delegates.ShowDelegate
 import com.example.jobsity.utils.SHOW_TYPE
 import com.example.jobsity.utils.toDA
 
-class MainAdapter(
+class ShowAdapter(
     onClick: (ShowItem) -> Unit
 ): GenericViewAdapter() {
 

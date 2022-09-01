@@ -11,7 +11,6 @@ data class ShowItem(
     val image: Image,
     val summary: String,
     val premiered: String,
-    val ended: String,
     val schedule: Schedule,
     @SerializedName("_embedded")
     val embedded: Embedded? = null,

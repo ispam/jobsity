@@ -1,8 +1,8 @@
 package com.example.jobsity.di
 
 import com.example.jobsity.data.TVMazeService
-import com.example.jobsity.data.local.MainRepository
-import com.example.jobsity.data.local.MainRepositoryImpl
+import com.example.jobsity.data.local.ShowRepository
+import com.example.jobsity.data.local.ShowRepositoryImpl
 import com.example.jobsity.di.annotations.IoDispatcher
 import dagger.Module
 import dagger.Provides
@@ -19,6 +19,6 @@ object RepositoryModule {
         @IoDispatcher
         dispatcher: CoroutineDispatcher,
         tvMazeService: TVMazeService
-    ): MainRepository = MainRepositoryImpl(dispatcher, tvMazeService)
+    ): ShowRepository = ShowRepositoryImpl(dispatcher, tvMazeService)
 
 }

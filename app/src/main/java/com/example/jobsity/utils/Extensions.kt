@@ -3,7 +3,10 @@ package com.example.jobsity.utils
 import android.util.Log
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
@@ -32,6 +35,9 @@ inline fun <T: Any, L: StateFlow<T>> LifecycleOwner.observeFlow(stateFlow: L, cr
     }
 }
 
+inline fun <T: Any, L: LiveData<T>> LifecycleOwner.observe(liveData: L, crossinline body: (T) -> Unit) =
+    liveData.observe(if (this is Fragment) viewLifecycleOwner else this, Observer { body(it) })
+
 fun Any.convertToJsonString(): String {
     return Gson().toJson(this).orEmpty()
 }
@@ -57,6 +63,3 @@ inline fun <reified T> String.toModel(): T? = this.run {
         null
     }
 }
-
-fun <T> Flow<T>.handleErrors(block: (Throwable) -> Unit): Flow<T> =
-    catch { e -> block.invoke(e) }

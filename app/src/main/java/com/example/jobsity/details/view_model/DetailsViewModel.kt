@@ -3,8 +3,7 @@ package com.example.jobsity.details.view_model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jobsity.common.delegate.ItemDelegate
-import com.example.jobsity.data.local.MainRepository
-import com.example.jobsity.utils.handleErrors
+import com.example.jobsity.data.local.ShowRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailsViewModel
 @Inject constructor(
-    private val mainRepository: MainRepository
+    private val showRepository: ShowRepository
 ) : ViewModel() {
 
     private val _detailsState = MutableStateFlow<DetailsState>(DetailsState.Loading)
@@ -24,9 +23,9 @@ class DetailsViewModel
 
     fun getShowEpisodes(id: Int) {
         viewModelScope.launch {
-            mainRepository.getShowWithEpisodes(id)
+            showRepository.getShowWithEpisodes(id)
                 .onStart { emit(DetailsState.Loading) }
-                .handleErrors {
+                .catch {
                     _detailsState.value = DetailsState.Error(it)
                 }
                 .collect {

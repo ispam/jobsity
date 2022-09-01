@@ -3,37 +3,41 @@ package com.example.jobsity.main_screen
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.jobsity.R
 import com.example.jobsity.common.BaseFragment
 import com.example.jobsity.databinding.FragmentMainBinding
-import com.example.jobsity.main_screen.adapters.MainAdapter
-import com.example.jobsity.main_screen.view_model.MainState
-import com.example.jobsity.main_screen.view_model.MainViewModel
+import com.example.jobsity.main_screen.adapters.ShowAdapter
+import com.example.jobsity.main_screen.view_model.ShowState
+import com.example.jobsity.main_screen.view_model.ShowViewModel
 import com.example.jobsity.utils.observeFlow
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainFragment : BaseFragment<FragmentMainBinding>() {
 
-    private lateinit var mainAdapter: MainAdapter
-    private val viewModel: MainViewModel by navGraphViewModels(R.id.main_graph) {
+    private lateinit var showAdapter: ShowAdapter
+    private val viewModel: ShowViewModel by navGraphViewModels(R.id.main_graph) {
         defaultViewModelProviderFactory
     }
 
     override fun onViewCreated() {
         setupRecycler()
 
+        binding.floatingActionButton.setOnClickListener {
+            findNavController().navigate(R.id.action_mainFragment_to_searchFragment)
+        }
         observeFlow(viewModel.mainState, ::onMainState)
     }
 
-    private fun onMainState(state: MainState?) {
+    private fun onMainState(state: ShowState?) {
         when (state) {
-            is MainState.Loading -> {
+            is ShowState.Loading -> {
                 showDialog(requireContext())
             }
-            is MainState.Error -> {
+            is ShowState.Error -> {
                 delayedBlock {
                     closeDialog()
                     Toast.makeText(
@@ -43,10 +47,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                     ).show()
                 }
             }
-            is MainState.ShowsLoaded -> {
+            is ShowState.ShowsLoaded -> {
                 delayedBlock {
                     closeDialog()
-                    mainAdapter.submitList(state.list)
+                    showAdapter.submitList(state.list)
                 }
             }
             else -> {}
@@ -55,11 +59,11 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
 
     private fun setupRecycler() {
         binding.mainRecycler.apply {
-            mainAdapter = MainAdapter {
+            showAdapter = ShowAdapter {
                 val bundle = bundleOf(SHOW_ID to it.id)
                 findNavController().navigate(R.id.action_mainFragment_to_showDetailsFragment, bundle)
             }
-            adapter = mainAdapter
+            adapter = showAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
     }

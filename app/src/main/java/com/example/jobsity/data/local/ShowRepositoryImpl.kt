@@ -5,7 +5,7 @@ import com.example.jobsity.data.TVMazeService
 import com.example.jobsity.data.local.entities.EpisodeItem
 import com.example.jobsity.data.local.entities.ShowItem
 import com.example.jobsity.details.delegates.SeasonDelegate
-import com.example.jobsity.details.view_model.DetailsState
+import com.example.jobsity.main_screen.view_model.DetailsState
 import com.example.jobsity.main_screen.view_model.ShowState
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.CoroutineDispatcher
@@ -20,6 +20,7 @@ class ShowRepositoryImpl(
 ) : ShowRepository {
 
     private var currentShows = mutableListOf<ShowItem>()
+    private var showWithEpisodes = mutableListOf<ItemDelegate>()
 
     override suspend fun getShows(): Flow<ShowState> {
         return flow {
@@ -37,31 +38,33 @@ class ShowRepositoryImpl(
     }
 
     override suspend fun getShowWithEpisodes(id: Int): Flow<DetailsState> {
-        return flow{
+        return flow {
             val service = tvMazeService.getShowWithEpisodes(id)
             if (service.isSuccessful) {
                 service.body()?.let {
-                    val list = mutableListOf<ItemDelegate>()
-                    list.add(it.copy(showSummary = true))
+                    showWithEpisodes.clear()
+                    showWithEpisodes.add(it.copy(showSummary = true))
                     it.embedded?.let { embedded ->
                         embedded.episodes.groupBy { it.season }.forEach { (season, episodes) ->
-                            list.add(SeasonDelegate.Model("Season $season"))
+                            showWithEpisodes.add(SeasonDelegate.Model("Season $season"))
                             episodes.forEach { episode ->
-                                list.add(EpisodeItem(
-                                    episode.id,
-                                    episode.name,
-                                    episode.season,
-                                    episode.number,
-                                    episode.runtime,
-                                    episode.rating,
-                                    episode.image,
-                                    episode.summary
-                                ))
+                                showWithEpisodes.add(
+                                    EpisodeItem(
+                                        episode.id,
+                                        episode.name,
+                                        episode.season,
+                                        episode.number,
+                                        episode.runtime,
+                                        episode.rating,
+                                        episode.image,
+                                        episode.summary
+                                    )
+                                )
                             }
                         }
                     }
 
-                    emit(DetailsState.ShowWithEpisodes(list))
+                    emit(DetailsState.ShowWithEpisodes(showWithEpisodes))
                 }
             } else {
                 emit(DetailsState.Error(Throwable("Illegal State")))
@@ -71,7 +74,32 @@ class ShowRepositoryImpl(
 
     override suspend fun searchShowName(query: String): Flow<List<ShowItem>> {
         return flow {
-            emit(currentShows.filter{ it.name.contains(query, true) })
+            emit(currentShows.filter { it.name.contains(query, true) })
+        }.flowOn(dispatcher)
+    }
+
+    override suspend fun favoriteShow(id: Int): Flow<DetailsState> {
+        return flow {
+            val showToUpdate = (showWithEpisodes.first() as ShowItem)
+            showToUpdate?.let {
+                it.copy(isFavorite = !it.isFavorite).apply {
+                    val interimShow = this
+                    showWithEpisodes[0] = interimShow
+                    currentShows.find { it.id == id }?.apply {
+                        val index = currentShows.indexOf(this)
+                        if (index >= 0) {
+                            currentShows[index] = interimShow
+                        }
+                    }
+                    emit(DetailsState.UpdateShow(showWithEpisodes))
+                }
+            }
+        }.flowOn(dispatcher)
+    }
+
+    override suspend fun getAllFavoriteShows(): Flow<List<ShowItem>> {
+        return flow {
+            emit(currentShows.filter { it.isFavorite }.map { it.copy(showSummary = false) })
         }.flowOn(dispatcher)
     }
 }

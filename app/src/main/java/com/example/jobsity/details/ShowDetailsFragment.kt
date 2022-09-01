@@ -1,16 +1,19 @@
 package com.example.jobsity.details
 
+import android.graphics.drawable.Drawable
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.jobsity.R
 import com.example.jobsity.common.BaseFragment
+import com.example.jobsity.data.local.entities.ShowItem
 import com.example.jobsity.databinding.FragmentShowDetailsBinding
 import com.example.jobsity.details.adapters.ShowDetailsAdapter
-import com.example.jobsity.details.view_model.DetailsState
-import com.example.jobsity.details.view_model.DetailsViewModel
+import com.example.jobsity.main_screen.view_model.DetailsState
+import com.example.jobsity.main_screen.view_model.ShowViewModel
 import com.example.jobsity.utils.convertToJsonString
 import com.example.jobsity.utils.observeFlow
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,16 +22,20 @@ import dagger.hilt.android.AndroidEntryPoint
 class ShowDetailsFragment : BaseFragment<FragmentShowDetailsBinding>() {
 
     private lateinit var detailsAdapter: ShowDetailsAdapter
-    private val detailsViewModel: DetailsViewModel by viewModels()
+
+    private val viewModel: ShowViewModel by navGraphViewModels(R.id.main_graph) {
+        defaultViewModelProviderFactory
+    }
 
     override fun onViewCreated() {
         setupRecycler()
         arguments?.getInt(SHOW_ID)?.let {
-            detailsViewModel.getShowEpisodes(it)
+            viewModel.getShowWithEpisodes(it)
         } ?: delayedBlock {
             findNavController().popBackStack()
         }
-        observeFlow(detailsViewModel.detailsState, ::onDetailsState)
+
+        observeFlow(viewModel.detailsState, ::onDetailsState)
     }
 
     private fun onDetailsState(state: DetailsState?) {
@@ -51,9 +58,30 @@ class ShowDetailsFragment : BaseFragment<FragmentShowDetailsBinding>() {
                 delayedBlock {
                     closeDialog()
                     detailsAdapter.submitList(state.list)
+                    with(binding.favoriteImg) {
+                        val showItem = state.list.first() as ShowItem
+                        setImageDrawable(getCorrectDrawable(showItem.isFavorite))
+                        setOnClickListener {
+                            viewModel.setFavoriteShow(showItem.id)
+                        }
+                    }
                 }
             }
+            is DetailsState.UpdateShow -> {
+                detailsAdapter.submitList(state.list)
+                val showItem = state.list.first() as ShowItem
+                binding.favoriteImg.setImageDrawable(getCorrectDrawable(showItem.isFavorite))
+                binding.favoriteImg.invalidate()
+            }
             else -> {}
+        }
+    }
+
+    private fun getCorrectDrawable(isFavorite: Boolean): Drawable? {
+        return if (isFavorite) {
+            ContextCompat.getDrawable(requireContext(), R.drawable.ic_favorite)
+        } else {
+            ContextCompat.getDrawable(requireContext(), R.drawable.ic_favorite_empty)
         }
     }
 

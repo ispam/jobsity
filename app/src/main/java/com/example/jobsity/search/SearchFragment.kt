@@ -51,7 +51,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             showAdapter = ShowAdapter {
                 val bundle = bundleOf(SHOW_ID to it.id)
                 findNavController().navigate(
-                    R.id.action_searchFragment_to_showDetailsFragment,
+                    R.id.action_global_showDetailsFragment,
                     bundle
                 )
             }

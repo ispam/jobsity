@@ -29,6 +29,9 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
         binding.floatingActionButton.setOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_searchFragment)
         }
+        binding.favoriteImg.setOnClickListener {
+            findNavController().navigate(R.id.action_mainFragment_to_favoritesFragment)
+        }
         observeFlow(viewModel.mainState, ::onMainState)
     }
 
@@ -61,7 +64,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
         binding.mainRecycler.apply {
             showAdapter = ShowAdapter {
                 val bundle = bundleOf(SHOW_ID to it.id)
-                findNavController().navigate(R.id.action_mainFragment_to_showDetailsFragment, bundle)
+                findNavController().navigate(R.id.action_global_showDetailsFragment, bundle)
             }
             adapter = showAdapter
             layoutManager = LinearLayoutManager(requireContext())

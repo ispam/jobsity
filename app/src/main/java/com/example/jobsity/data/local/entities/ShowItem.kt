@@ -14,7 +14,8 @@ data class ShowItem(
     val schedule: Schedule,
     @SerializedName("_embedded")
     val embedded: Embedded? = null,
-    val showSummary: Boolean = false
+    val showSummary: Boolean = false,
+    val isFavorite: Boolean = false
 ) : ItemDelegate {
     override fun getViewType(): Int = SHOW_TYPE
     override fun id(): String = id.toString()

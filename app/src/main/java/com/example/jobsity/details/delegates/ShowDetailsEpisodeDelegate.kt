@@ -8,8 +8,9 @@ import com.example.jobsity.data.local.entities.EpisodeItem
 import com.example.jobsity.databinding.DelegateShowEpisodesBinding
 import com.squareup.picasso.Picasso
 
-class ShowDetailsEpisodeDelegate :
-    DelegateAdapter<ShowDetailsEpisodeDelegate.ViewHolder, EpisodeItem> {
+class ShowDetailsEpisodeDelegate(
+    private val onClick: (EpisodeItem) -> Unit
+): DelegateAdapter<ShowDetailsEpisodeDelegate.ViewHolder, EpisodeItem> {
 
     override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
         return ViewHolder(
@@ -40,6 +41,9 @@ class ShowDetailsEpisodeDelegate :
                 }
                 episodeRating.text = rating
                 episodeRuntime.text = "Runtime ${item.runtime} minutes"
+                root.setOnClickListener {
+                    onClick.invoke(item)
+                }
             }
         }
     }

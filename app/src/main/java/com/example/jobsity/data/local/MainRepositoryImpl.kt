@@ -29,11 +29,9 @@ class MainRepositoryImpl(
                     emit(MainState.ShowsLoaded(it))
                 }
             } else {
-                emit(MainState.Error)
+                emit(MainState.Error(Throwable("IllegalState")))
             }
         }.flowOn(dispatcher)
-            .onStart { emit(MainState.Loading) }
-            .catch { emit(MainState.Error) }
     }
 
     override suspend fun getShowWithEpisodes(id: Int): Flow<DetailsState> {
@@ -54,20 +52,19 @@ class MainRepositoryImpl(
                                     episode.number,
                                     episode.runtime,
                                     episode.rating,
-                                    episode.image
+                                    episode.image,
+                                    episode.summary,
+                                    episode.ended
                                 ))
                             }
                         }
-
                     }
 
                     emit(DetailsState.ShowWithEpisodes(list))
                 }
             } else {
-                emit(DetailsState.Error)
+                emit(DetailsState.Error(Throwable("Illegal State")))
             }
-        }.onStart { emit(DetailsState.Loading) }
-            .catch { emit(DetailsState.Error) }
-            .flowOn(dispatcher)
+        }.flowOn(dispatcher)
     }
 }

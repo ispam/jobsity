@@ -19,6 +19,14 @@
         android:id="@+id/showDetailsFragment"
         android:name="com.example.jobsity.details.ShowDetailsFragment"
         android:label="ShowDetailsFragment"
-        tools:layout="@layout/fragment_show_details" />
+        tools:layout="@layout/fragment_show_details" >
+        <action
+            android:id="@+id/action_showDetailsFragment_to_episodeDetailsDialogFragment"
+            app:destination="@id/episodeDetailsDialogFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/episodeDetailsDialogFragment"
+        android:name="com.example.jobsity.details.EpisodeDetailsDialogFragment"
+        android:label="EpisodeDetailsDialogFragment" />
 
 </navigation>

@@ -14,7 +14,9 @@ data class EpisodeItem(
     val number: Int?,
     val runtime: Int?,
     val rating: Rating?,
-    val image: Image?
+    val image: Image?,
+    val summary: String?,
+    val ended: String?
 ): ItemDelegate {
     override fun getViewType(): Int = SHOW_DETAILS_TYPE
     override fun id(): String = id.toString()

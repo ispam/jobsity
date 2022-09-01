@@ -32,10 +32,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
         binding.favoriteImg.setOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_favoritesFragment)
         }
-        observeFlow(viewModel.mainState, ::onMainState)
+        observeFlow(viewModel.showState, ::onShowState)
     }
 
-    private fun onMainState(state: ShowState?) {
+    private fun onShowState(state: ShowState?) {
         when (state) {
             is ShowState.Loading -> {
                 showDialog(requireContext())

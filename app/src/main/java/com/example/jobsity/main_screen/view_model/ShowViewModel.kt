@@ -23,7 +23,7 @@ class ShowViewModel
 ) : ViewModel() {
 
     private val _showState = MutableStateFlow<ShowState>(ShowState.Loading)
-    val mainState = _showState.asStateFlow()
+    val showState = _showState.asStateFlow()
 
     private val _searchList = MutableLiveData<List<ShowItem>>()
     val searchList: LiveData<List<ShowItem>> = _searchList
